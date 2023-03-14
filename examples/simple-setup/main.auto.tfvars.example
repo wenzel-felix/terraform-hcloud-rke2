@@ -1,0 +1,4 @@
+hetzner_token = "<Your Hetzner Cloud token>"
+cloudflare_token = "<Your Cloudflare token>"
+cloudflare_zone_id = "<Your Cloudflare zone ID>"
+cloudflare_domain = "<Your Cloudflare domain>"
