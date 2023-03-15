@@ -149,7 +149,7 @@ provider "rancher2" {
 
 # Create a new rancher2_bootstrap using bootstrap provider config
 resource "rancher2_bootstrap" "admin" {
-  depends_on = [time_sleep.wait_30_seconds]
+  depends_on = [time_sleep.wait_10_seconds]
   provider         = rancher2.bootstrap
   initial_password = random_password.main.result
 }
@@ -239,4 +239,8 @@ resource "rancher2_global_role_binding" "foo" {
   name = "foo"
   global_role_id = "admin"
   user_id = rancher2_user.foo.id
+}
+
+output "kube_config" {
+  value = rancher2_cluster.test_cluster.kube_config
 }

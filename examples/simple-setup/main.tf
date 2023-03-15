@@ -5,3 +5,8 @@ module "rancher" {
   cloudflare_zone_id = var.cloudflare_zone_id
   cloudflare_domain = var.cloudflare_domain
 }
+
+resource "local_file" "name" {
+  content = module.rancher.kube_config
+  filename = "kubeconfig"
+}
