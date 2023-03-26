@@ -217,10 +217,35 @@ resource "rancher2_node_pool" "worker" {
   worker           = true
 }
 
+resource "hcloud_load_balancer" "load_balancer" {
+  name               = "cluster-load-balancer"
+  load_balancer_type = "lb11"
+  location           = "hel1"
+}
+
 resource "rancher2_cluster" "test_cluster" {
   name        = "test-cluster"
   description = "Foo rancher2 custom cluster"
   rke_config {
+    addons = <<EOF
+---
+apiVersion: v1
+stringData:
+  token: ${var.hetzner_token}
+  network: ${hcloud_network.main.name}
+kind: Secret
+metadata:
+  name: hcloud
+  namespace: kube-system
+    EOF
+    addons_include = [ "https://github.com/hetznercloud/hcloud-cloud-controller-manager/releases/latest/download/ccm-networks.yaml" ]
+    services {
+      kubelet {
+        extra_args = {
+          "cloud-provider" = "external"
+        }
+      }
+    }
     enable_cri_dockerd = true
     network {
       plugin = "canal"
@@ -228,19 +253,20 @@ resource "rancher2_cluster" "test_cluster" {
   }
 }
 
-resource "rancher2_user" "foo" {
-  name = "Felix"
-  username = "foo"
-  password = "changeme!234"
+resource "random_password" "admin_user" {
+  length           = 16
+  special          = false
+}
+
+resource "rancher2_user" "admin_user" {
+  name = "rancheradmin"
+  username = "rancheradmin"
+  password = random_password.admin_user.result
   enabled = true
 }
 
-resource "rancher2_global_role_binding" "foo" {
-  name = "foo"
+resource "rancher2_global_role_binding" "admin_user" {
+  name = "rancheradmin"
   global_role_id = "admin"
-  user_id = rancher2_user.foo.id
-}
-
-output "kube_config" {
-  value = rancher2_cluster.test_cluster.kube_config
+  user_id = rancher2_user.admin_user.id
 }
