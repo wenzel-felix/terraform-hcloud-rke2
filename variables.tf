@@ -23,3 +23,15 @@ variable "cloudflare_domain" {
   type        = string
   description = "Cloudflare Domain"  
 }
+
+variable "master_node_count" {
+  type = number
+  default = 1
+  description = "value for the number of master nodes"
+}
+
+variable "worker_node_count" {
+  type = number
+  default = 1
+  description = "value for the number of worker nodes"
+}
