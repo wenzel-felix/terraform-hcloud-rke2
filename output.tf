@@ -6,16 +6,16 @@
 #   value = "https://${var.rancher_domain_prefix}.${var.cloudflare_domain}"
 # }
 
-# output "rancher_admin_password" {
-#   value = random_password.admin_user.result
-# }
+output "rancher_admin_password" {
+  value = rancher2_user.admin_user.password
+}
 
-# output "rancher_admin_username" {
-#   value = "rancherAdmin"
-# }
+output "rancher_admin_username" {
+  value = rancher2_user.admin_user.username
+}
 
 output "kubeconfig" {
-  value = data.remote_file.kubeconfig.content
+  value = local.kube_config
 }
 
 output "cluster_ca" {

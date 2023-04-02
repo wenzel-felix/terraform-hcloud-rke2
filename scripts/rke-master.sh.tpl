@@ -12,6 +12,6 @@ tls-san:
   - ${SERVER_ADDRESS}
 EOF
 
-sudo curl -sfL https://get.rke2.io | sh -
+sudo curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${INSTALL_RKE2_VERSION}" sh -
 sudo systemctl enable rke2-server.service
 sudo systemctl start rke2-server.service

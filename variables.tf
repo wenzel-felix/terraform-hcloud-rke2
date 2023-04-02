@@ -32,6 +32,17 @@ variable "master_node_count" {
 
 variable "worker_node_count" {
   type = number
-  default = 1
+  default = 0
   description = "value for the number of worker nodes"
+}
+
+variable "letsencrypt_issuer" {
+  type = string
+  description = "value for the letsencrypt issuer"
+}
+
+variable "rke2_version" {
+  type = string
+  default = ""
+  description = "value for the rke2 version"
 }

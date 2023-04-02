@@ -27,13 +27,13 @@ provider "hcloud" {
   token = var.hetzner_token
 }
 
-# resource "cloudflare_record" "rancher" {
-#   zone_id = var.cloudflare_zone_id
-#   name    = var.rancher_domain_prefix
-#   type    = "A"
-#   proxied = true
-#   value   = hcloud_server.main.ipv4_address
-# }
+resource "cloudflare_record" "rancher" {
+  zone_id = var.cloudflare_zone_id
+  name    = var.rancher_domain_prefix
+  type    = "A"
+  proxied = false
+  value   = hcloud_load_balancer.rancher_management_lb.ipv4
+}
 
 resource "hcloud_network" "main" {
   name     = "main-network"
@@ -55,7 +55,8 @@ resource "random_string" "master_node_suffix" {
 
 data "remote_file" "kubeconfig" {
   depends_on = [
-    hcloud_load_balancer_target.rancher_management_lb_targets
+    hcloud_load_balancer_target.rancher_management_lb_targets,
+    hcloud_server.master
   ]
   conn {
     host        = hcloud_load_balancer.rancher_management_lb.ipv4
@@ -72,6 +73,7 @@ locals {
   client_key   = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).users[0].user.client-key-data)
   client_cert  = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).users[0].user.client-certificate-data)
   cluster_host = "https://${hcloud_load_balancer.rancher_management_lb.ipv4}:6443"
+  kube_config = replace(data.remote_file.kubeconfig.content, "https://127.0.0.1:6443", local.cluster_host)
 }
 
 resource "random_password" "rke2_token" {
@@ -92,12 +94,13 @@ resource "hcloud_server" "master" {
   name        = "rke2-master-${random_string.master_node_suffix[count.index].result}"
   server_type = "cpx21"
   image       = "ubuntu-20.04"
-  location    = "nbg1"
+  location    = "hel1"
   ssh_keys    = [hcloud_ssh_key.main.id]
   user_data = templatefile("${path.module}/scripts/rke-master.sh.tpl", {
     RKE_TOKEN      = random_password.rke2_token.result
     INITIAL_MASTER = count.index == 0 && !local.cluster_loadbalancer_running
     SERVER_ADDRESS = hcloud_load_balancer.rancher_management_lb.ipv4
+    INSTALL_RKE2_VERSION = var.rke2_version
   })
 
   provisioner "remote-exec" {
@@ -133,11 +136,12 @@ resource "hcloud_server" "worker" {
   name        = "rke2-worker-${random_string.worker_node_suffix[count.index].result}"
   server_type = "cpx21"
   image       = "ubuntu-20.04"
-  location    = "nbg1"
+  location    = "hel1"
   ssh_keys    = [hcloud_ssh_key.main.id]
   user_data = templatefile("${path.module}/scripts/rke-worker.sh.tpl", {
     RKE_TOKEN      = random_password.rke2_token.result
     SERVER_ADDRESS = hcloud_load_balancer.rancher_management_lb.ipv4
+    INSTALL_RKE2_VERSION = var.rke2_version
   })
 
   provisioner "remote-exec" {
@@ -153,6 +157,12 @@ resource "hcloud_server" "worker" {
       user        = "root"
       private_key = tls_private_key.machines.private_key_openssh
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      user_data
+    ]
   }
 }
 

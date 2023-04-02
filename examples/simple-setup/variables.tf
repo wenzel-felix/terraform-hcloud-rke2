@@ -17,3 +17,8 @@ variable "cloudflare_domain" {
   type        = string
   description = "Cloudflare Domain"  
 }
+
+variable "letsencrypt_issuer" {
+  type = string
+  description = "value for the letsencrypt issuer"
+}
