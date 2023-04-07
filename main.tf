@@ -53,10 +53,15 @@ resource "random_string" "master_node_suffix" {
   special = false
 }
 
+resource "time_sleep" "wait_30_seconds" {
+  depends_on = [hcloud_load_balancer_service.rancher_management_lb_ssh_service]
+
+  create_duration = "30s"
+}
+
 data "remote_file" "kubeconfig" {
   depends_on = [
-    hcloud_load_balancer_target.rancher_management_lb_targets,
-    hcloud_server.master
+    time_sleep.wait_30_seconds
   ]
   conn {
     host        = hcloud_load_balancer.rancher_management_lb.ipv4
