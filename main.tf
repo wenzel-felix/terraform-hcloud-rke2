@@ -1,16 +1,8 @@
 terraform {
   required_providers {
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 3.0"
-    }
     hcloud = {
       source  = "hetznercloud/hcloud"
       version = "~> 1.36.2"
-    }
-    rancher2 = {
-      source  = "rancher/rancher2"
-      version = "~> 1.25.0"
     }
     remote = {
       source  = "tenstad/remote"
@@ -19,20 +11,8 @@ terraform {
   }
 }
 
-provider "cloudflare" {
-  api_token = var.cloudflare_token
-}
-
 provider "hcloud" {
   token = var.hetzner_token
-}
-
-resource "cloudflare_record" "rancher" {
-  zone_id = var.cloudflare_zone_id
-  name    = var.rancher_domain_prefix
-  type    = "A"
-  proxied = false
-  value   = hcloud_load_balancer.rancher_management_lb.ipv4
 }
 
 resource "hcloud_network" "main" {
@@ -54,31 +34,9 @@ resource "random_string" "master_node_suffix" {
 }
 
 resource "time_sleep" "wait_30_seconds" {
-  depends_on = [hcloud_load_balancer_service.rancher_management_lb_ssh_service]
+  depends_on = [hcloud_load_balancer_service.management_lb_ssh_service]
 
   create_duration = "30s"
-}
-
-data "remote_file" "kubeconfig" {
-  depends_on = [
-    time_sleep.wait_30_seconds
-  ]
-  conn {
-    host        = hcloud_load_balancer.rancher_management_lb.ipv4
-    user        = "root"
-    private_key = tls_private_key.machines.private_key_openssh
-    sudo        = true
-  }
-
-  path = "/etc/rancher/rke2/rke2.yaml"
-}
-
-locals {
-  cluster_ca   = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).clusters[0].cluster.certificate-authority-data)
-  client_key   = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).users[0].user.client-key-data)
-  client_cert  = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).users[0].user.client-certificate-data)
-  cluster_host = "https://${hcloud_load_balancer.rancher_management_lb.ipv4}:6443"
-  kube_config = replace(data.remote_file.kubeconfig.content, "https://127.0.0.1:6443", local.cluster_host)
 }
 
 resource "random_password" "rke2_token" {
@@ -86,12 +44,13 @@ resource "random_password" "rke2_token" {
   special = false
 }
 
-data "hcloud_load_balancers" "lb_3" {
-  with_selector = "rancher=management"
-}
-
 locals {
-  cluster_loadbalancer_running = length(data.hcloud_load_balancers.lb_3.load_balancers) > 0
+  cluster_loadbalancer_running = length(data.hcloud_load_balancers.rke2_management.load_balancers) > 0
+  cluster_ca   = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).clusters[0].cluster.certificate-authority-data)
+  client_key   = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).users[0].user.client-key-data)
+  client_cert  = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).users[0].user.client-certificate-data)
+  cluster_host = "https://${hcloud_load_balancer.management_lb.ipv4}:6443"
+  kube_config = replace(data.remote_file.kubeconfig.content, "https://127.0.0.1:6443", local.cluster_host)
 }
 
 resource "hcloud_server" "master" {
@@ -104,7 +63,7 @@ resource "hcloud_server" "master" {
   user_data = templatefile("${path.module}/scripts/rke-master.sh.tpl", {
     RKE_TOKEN      = random_password.rke2_token.result
     INITIAL_MASTER = count.index == 0 && !local.cluster_loadbalancer_running
-    SERVER_ADDRESS = hcloud_load_balancer.rancher_management_lb.ipv4
+    SERVER_ADDRESS = hcloud_load_balancer.management_lb.ipv4
     INSTALL_RKE2_VERSION = var.rke2_version
   })
 
@@ -145,7 +104,7 @@ resource "hcloud_server" "worker" {
   ssh_keys    = [hcloud_ssh_key.main.id]
   user_data = templatefile("${path.module}/scripts/rke-worker.sh.tpl", {
     RKE_TOKEN      = random_password.rke2_token.result
-    SERVER_ADDRESS = hcloud_load_balancer.rancher_management_lb.ipv4
+    SERVER_ADDRESS = hcloud_load_balancer.management_lb.ipv4
     INSTALL_RKE2_VERSION = var.rke2_version
   })
 
@@ -184,46 +143,11 @@ resource "hcloud_server_network" "worker" {
 }
 
 resource "local_file" "name" {
+  count = var.generate_ssh_key_file ? 1 : 0
   content         = tls_private_key.machines.private_key_openssh
   filename        = "rancher-host-key"
   file_permission = "0600"
 }
-
-# resource "hcloud_firewall" "main" {
-#   name = "main-firewall"
-#   rule {
-#     direction = "in"
-#     protocol  = "tcp"
-#     port      = "80"
-#     source_ips = [
-#       "0.0.0.0/0",
-#       "::/0"
-#     ]
-#   }
-#   rule {
-#     direction = "in"
-#     protocol  = "tcp"
-#     port      = "22"
-#     source_ips = [
-#       "0.0.0.0/0",
-#       "::/0"
-#     ]
-#   }
-#   rule {
-#     direction = "in"
-#     protocol  = "tcp"
-#     port      = "443"
-#     source_ips = [
-#       "0.0.0.0/0",
-#       "::/0"
-#     ]
-#   }
-# }
-
-# resource "hcloud_firewall_attachment" "main" {
-#   firewall_id = hcloud_firewall.main.id
-#   server_ids  = [hcloud_server.main.id]
-# }
 
 resource "hcloud_ssh_key" "main" {
   name       = "main-ssh-key"

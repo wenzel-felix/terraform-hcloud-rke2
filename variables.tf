@@ -3,27 +3,6 @@ variable "hetzner_token" {
   description = "Hetzner Cloud API Token"
 }
 
-variable "cloudflare_token" {
-  type        = string
-  description = "Cloudflare API Token"
-}
-
-variable "cloudflare_zone_id" {
-  type        = string
-  description = "Cloudflare Zone ID"
-}
-
-variable "rancher_domain_prefix" {
-  type        = string
-  description = "Domain prefix for the Rancher server"
-  default = "rancher"
-}
-
-variable "cloudflare_domain" {
-  type        = string
-  description = "Cloudflare Domain"  
-}
-
 variable "master_node_count" {
   type = number
   default = 1
@@ -36,13 +15,20 @@ variable "worker_node_count" {
   description = "value for the number of worker nodes"
 }
 
-variable "letsencrypt_issuer" {
-  type = string
-  description = "value for the letsencrypt issuer"
-}
-
 variable "rke2_version" {
   type = string
   default = ""
   description = "value for the rke2 version"
+}
+
+variable "generate_ssh_key_file" {
+  type = bool
+  default = false
+  description = "Defines whether the generated ssh key should be stored as local file."
+}
+
+variable "additional_lb_service_ports" {
+  type = list(string)
+  default = []
+  description = "Define additional service ports for the management cluster loadbalancer."
 }

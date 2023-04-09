@@ -6,7 +6,7 @@ provider "rancher2" {
 
 # Create a new rancher2_bootstrap using bootstrap provider config
 resource "rancher2_bootstrap" "admin" {
-  depends_on = [helm_release.rancher]
+  depends_on       = [helm_release.rancher]
   provider         = rancher2.bootstrap
   initial_password = random_password.rancher_init_password.result
 }
@@ -34,7 +34,7 @@ resource "rancher2_node_template" "hetzner_worker" {
     image               = "ubuntu-20.04"
     server_location     = "nbg1"
     server_type         = "cpx21"
-    networks            = hcloud_network.main.id
+    networks            = module.rke2.management_network_id
     use_private_network = true
   }
 }
@@ -47,7 +47,7 @@ resource "rancher2_node_template" "hetzner_master" {
     image               = "ubuntu-20.04"
     server_location     = "nbg1"
     server_type         = "cpx11"
-    networks            = hcloud_network.main.id
+    networks            = module.rke2.management_network_id
     use_private_network = true
   }
 }
@@ -78,18 +78,18 @@ resource "rancher2_cluster" "test_cluster" {
   name        = "test-cluster"
   description = "Foo rancher2 custom cluster"
   rke_config {
-    addons = <<EOF
+    addons         = <<EOF
 ---
 apiVersion: v1
 stringData:
   token: ${var.hetzner_token}
-  network: ${hcloud_network.main.name}
+  network: ${module.rke2.management_network_name}
 kind: Secret
 metadata:
   name: hcloud
   namespace: kube-system
     EOF
-    addons_include = [ "https://github.com/hetznercloud/hcloud-cloud-controller-manager/releases/latest/download/ccm-networks.yaml" ]
+    addons_include = ["https://github.com/hetznercloud/hcloud-cloud-controller-manager/releases/latest/download/ccm-networks.yaml"]
     services {
       kubelet {
         extra_args = {
@@ -105,19 +105,19 @@ metadata:
 }
 
 resource "random_password" "admin_user" {
-  length           = 16
-  special          = false
+  length  = 16
+  special = false
 }
 
 resource "rancher2_user" "admin_user" {
-  name = "rancheradmin"
+  name     = "rancheradmin"
   username = "rancheradmin"
   password = random_password.admin_user.result
-  enabled = true
+  enabled  = true
 }
 
 resource "rancher2_global_role_binding" "admin_user" {
-  name = "rancheradmin"
+  name           = "rancheradmin"
   global_role_id = "admin"
-  user_id = rancher2_user.admin_user.id
+  user_id        = rancher2_user.admin_user.id
 }
