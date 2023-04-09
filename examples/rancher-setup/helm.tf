@@ -10,7 +10,8 @@ provider "helm" {
 
 resource "helm_release" "cert_manager" {
   depends_on = [
-    cloudflare_record.rancher
+    cloudflare_record.rancher,
+    module.rke2
   ]
   name       = "cert-manager"
   namespace  = "cert-manager"
