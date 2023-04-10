@@ -32,3 +32,15 @@ variable "additional_lb_service_ports" {
   default = []
   description = "Define additional service ports for the management cluster loadbalancer."
 }
+
+variable "network_zone" {
+  type = string
+  default = "eu-central"
+  description = "Define the network location for the cluster."
+}
+
+variable "node_locations" {
+  type = list(string)
+  default = ["hel1", "nbg1", "fsn1"]
+  description = "Define the location in which nodes will be deployed. (Most be in the same network zone.)"
+}
