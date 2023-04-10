@@ -5,3 +5,8 @@ module "rancher" {
   worker_node_count = 1
 }
 
+resource "local_file" "name" {
+  content = module.rancher.kube_config
+  filename = "kubeconfig.yaml"
+}
+
