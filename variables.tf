@@ -42,5 +42,5 @@ variable "network_zone" {
 variable "node_locations" {
   type = list(string)
   default = ["hel1", "nbg1", "fsn1"]
-  description = "Define the location in which nodes will be deployed."
+  description = "Define the location in which nodes will be deployed. (Most be in the same network zone.)"
 }
