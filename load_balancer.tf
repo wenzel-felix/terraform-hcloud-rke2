@@ -20,8 +20,7 @@ resource "hcloud_load_balancer_target" "management_lb_targets" {
   server_id        = hcloud_server.master[count.index].id
   use_private_ip   = true
   depends_on = [
-    hcloud_load_balancer_network.management_lb_network_registration,
-    hcloud_server_network.master
+    hcloud_load_balancer_network.management_lb_network_registration
   ]
 }
 

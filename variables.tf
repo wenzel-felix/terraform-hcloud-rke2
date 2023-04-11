@@ -44,3 +44,9 @@ variable "node_locations" {
   default = ["hel1", "nbg1", "fsn1"]
   description = "Define the location in which nodes will be deployed. (Most be in the same network zone.)"
 }
+
+variable "preinstall_hcloud_controller" {
+  type = bool
+  default = true
+  description = "Defines whether the Hetzner Cloud Controller should be preinstalled into the cluster."
+}

@@ -54,8 +54,11 @@ locals {
 }
 
 resource "hcloud_server" "master" {
+  depends_on = [
+    hcloud_network_subnet.main
+  ]
   count       = var.master_node_count
-  name        = "rke2-master-${random_string.master_node_suffix[count.index].result}"
+  name        = "rke2-master-${lower(random_string.master_node_suffix[count.index].result)}"
   server_type = "cpx21"
   image       = "ubuntu-20.04"
   location    = element(var.node_locations, count.index)
@@ -67,6 +70,10 @@ resource "hcloud_server" "master" {
     INSTALL_RKE2_VERSION = var.rke2_version
   })
 
+  network {
+    network_id = hcloud_network.main.id
+  }
+
   provisioner "remote-exec" {
     inline = [
       "echo 'Waiting for cloud-init to complete...'",
@@ -86,6 +93,7 @@ resource "hcloud_server" "master" {
     ignore_changes = [
       user_data
     ]
+    create_before_destroy = true
   }
 }
 
@@ -96,8 +104,11 @@ resource "random_string" "worker_node_suffix" {
 }
 
 resource "hcloud_server" "worker" {
+  depends_on = [
+    hcloud_network_subnet.main
+  ]
   count       = var.worker_node_count
-  name        = "rke2-worker-${random_string.worker_node_suffix[count.index].result}"
+  name        = "rke2-worker-${lower(random_string.worker_node_suffix[count.index].result)}"
   server_type = "cpx21"
   image       = "ubuntu-20.04"
   location    = element(var.node_locations, count.index)
@@ -107,6 +118,10 @@ resource "hcloud_server" "worker" {
     SERVER_ADDRESS       = hcloud_load_balancer.management_lb.ipv4
     INSTALL_RKE2_VERSION = var.rke2_version
   })
+
+  network {
+    network_id = hcloud_network.main.id
+  }
 
   provisioner "remote-exec" {
     inline = [
@@ -127,19 +142,8 @@ resource "hcloud_server" "worker" {
     ignore_changes = [
       user_data
     ]
+    create_before_destroy = true
   }
-}
-
-resource "hcloud_server_network" "master" {
-  count     = var.master_node_count
-  server_id = hcloud_server.master[count.index].id
-  subnet_id = hcloud_network_subnet.main.id
-}
-
-resource "hcloud_server_network" "worker" {
-  count     = var.worker_node_count
-  server_id = hcloud_server.worker[count.index].id
-  subnet_id = hcloud_network_subnet.main.id
 }
 
 resource "local_file" "name" {

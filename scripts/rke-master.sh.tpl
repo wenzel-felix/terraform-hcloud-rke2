@@ -1,5 +1,12 @@
 #! /bin/bash
 
+NODE_IP=""
+
+while [[ "$NODE_IP" = "" ]]
+do
+  NODE_IP=$(curl -s http://169.254.169.254/hetzner/v1/metadata/private-networks | grep "ip:" | cut -f 3 -d" ")
+done
+
 mkdir -p /etc/rancher/rke2
 cat <<EOF > /etc/rancher/rke2/config.yaml
 %{ if INITIAL_MASTER }
@@ -10,6 +17,8 @@ token: ${RKE_TOKEN}
 %{ endif }
 tls-san:
   - ${SERVER_ADDRESS}
+cloud-provider-name: external
+node-ip: $NODE_IP
 EOF
 
 sudo curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${INSTALL_RKE2_VERSION}" sh -
