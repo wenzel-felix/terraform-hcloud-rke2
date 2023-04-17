@@ -1,30 +1,10 @@
-terraform {
-  required_providers {
-    hcloud = {
-      source  = "hetznercloud/hcloud"
-      version = "~> 1.37.0"
-    }
-    remote = {
-      source  = "tenstad/remote"
-      version = "0.1.1"
-    }
-  }
-}
-
-provider "hcloud" {
-  token = var.hetzner_token
-}
-
-resource "hcloud_network" "main" {
-  name     = "main-network"
-  ip_range = "10.0.0.0/16"
-}
-
-resource "hcloud_network_subnet" "main" {
-  network_id   = hcloud_network.main.id
-  type         = "cloud"
-  network_zone = var.network_zone
-  ip_range     = "10.0.0.0/16"
+locals {
+  cluster_loadbalancer_running = length(data.hcloud_load_balancers.rke2_management.load_balancers) > 0
+  cluster_ca                   = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).clusters[0].cluster.certificate-authority-data)
+  client_key                   = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).users[0].user.client-key-data)
+  client_cert                  = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).users[0].user.client-certificate-data)
+  cluster_host                 = "https://${hcloud_load_balancer.management_lb.ipv4}:6443"
+  kube_config                  = replace(data.remote_file.kubeconfig.content, "https://127.0.0.1:6443", local.cluster_host)
 }
 
 resource "random_string" "master_node_suffix" {
@@ -42,15 +22,6 @@ resource "time_sleep" "wait_30_seconds" {
 resource "random_password" "rke2_token" {
   length  = 48
   special = false
-}
-
-locals {
-  cluster_loadbalancer_running = length(data.hcloud_load_balancers.rke2_management.load_balancers) > 0
-  cluster_ca                   = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).clusters[0].cluster.certificate-authority-data)
-  client_key                   = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).users[0].user.client-key-data)
-  client_cert                  = data.remote_file.kubeconfig.content == "" ? "" : base64decode(yamldecode(data.remote_file.kubeconfig.content).users[0].user.client-certificate-data)
-  cluster_host                 = "https://${hcloud_load_balancer.management_lb.ipv4}:6443"
-  kube_config                  = replace(data.remote_file.kubeconfig.content, "https://127.0.0.1:6443", local.cluster_host)
 }
 
 resource "hcloud_server" "master" {
@@ -80,7 +51,6 @@ resource "hcloud_server" "master" {
       "cloud-init status --wait > /dev/null",
       "echo 'Completed cloud-init!'"
     ]
-
     connection {
       type        = "ssh"
       host        = self.ipv4_address
@@ -98,7 +68,7 @@ resource "hcloud_server" "master" {
 }
 
 resource "random_string" "worker_node_suffix" {
-  count   = var.master_node_count
+  count   = var.worker_node_count
   length  = 6
   special = false
 }
@@ -129,7 +99,6 @@ resource "hcloud_server" "worker" {
       "cloud-init status --wait > /dev/null",
       "echo 'Completed cloud-init!'"
     ]
-
     connection {
       type        = "ssh"
       host        = self.ipv4_address
@@ -145,21 +114,3 @@ resource "hcloud_server" "worker" {
     create_before_destroy = true
   }
 }
-
-resource "local_file" "name" {
-  count           = var.generate_ssh_key_file ? 1 : 0
-  content         = tls_private_key.machines.private_key_openssh
-  filename        = "rancher-host-key"
-  file_permission = "0600"
-}
-
-resource "hcloud_ssh_key" "main" {
-  name       = "main-ssh-key"
-  public_key = tls_private_key.machines.public_key_openssh
-}
-
-resource "tls_private_key" "machines" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
