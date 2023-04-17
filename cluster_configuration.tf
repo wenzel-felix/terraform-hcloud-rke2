@@ -7,6 +7,7 @@ provider "kubernetes" {
 }
 
 resource "kubernetes_secret" "hcloud_ccm" {
+  count = var.preinstall_hcloud_controller ? 1 : 0
   metadata {
     name      = "hcloud"
     namespace = "kube-system"
@@ -47,6 +48,7 @@ resource "kubernetes_secret" "hcloud_ccm" {
 # }
 
 resource "kubernetes_service_account" "hcloud_ccm" {
+  count = var.preinstall_hcloud_controller ? 1 : 0
   metadata {
     name      = "cloud-controller-manager"
     namespace = "kube-system"
@@ -54,6 +56,7 @@ resource "kubernetes_service_account" "hcloud_ccm" {
 }
 
 resource "kubernetes_cluster_role_binding" "hcloud_ccm" {
+  count = var.preinstall_hcloud_controller ? 1 : 0
   metadata {
     name = "system:cloud-controller-manager"
   }
@@ -70,6 +73,7 @@ resource "kubernetes_cluster_role_binding" "hcloud_ccm" {
 }
 
 resource "kubernetes_deployment" "hcloud_ccm" {
+  count = var.preinstall_hcloud_controller ? 1 : 0
   metadata {
     name      = "hcloud-cloud-controller-manager"
     namespace = "kube-system"
