@@ -7,6 +7,7 @@ data "remote_file" "kubeconfig" {
     user        = "root"
     private_key = tls_private_key.machines.private_key_openssh
     sudo        = true
+    timeout     = 500
   }
 
   path = "/etc/rancher/rke2/rke2.yaml"
