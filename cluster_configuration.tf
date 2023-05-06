@@ -48,7 +48,10 @@ resource "kubernetes_deployment" "hcloud_ccm" {
   count = var.preinstall_hcloud_controller ? 1 : 0
 
   lifecycle {
-    ignore_changes = [ spec[0].template[0].spec[0] ]
+    ignore_changes = [ 
+      spec[0].template[0].spec[0],
+      metadata[0].annotations
+    ]
   }
 
   metadata {
