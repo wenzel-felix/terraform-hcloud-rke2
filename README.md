@@ -34,3 +34,11 @@ terraform apply
 ### As module
 
 Refer to the module registry documentation [here](https://registry.terraform.io/modules/wenzel-felix/rke2/hcloud/latest).
+
+## Maintain/upgrade your cluster (API server)
+
+### Change node size / Change node operating system / Upgrade cluster version
+Change the Terraform variable to the desired configuration, then go to the Hetzner Cloud UI and remove one master at a time and apply the configuration after each.
+To ensure minimal downtime while you upgrade the cluster consider (draining the node)[https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/] you plan to replace/upgrade.
+
+_Note:_ For upgrading your cluster version please review any breaking changes on the (official rke2 repository)[https://github.com/rancher/rke2/releases].

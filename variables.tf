@@ -45,6 +45,30 @@ variable "node_locations" {
   description = "Define the location in which nodes will be deployed. (Most be in the same network zone.)"
 }
 
+variable "master_node_image" {
+  type = string
+  default = "ubuntu-22.04"
+  description = "Define the image for the master nodes."
+}
+
+variable "master_node_server_type" {
+  type = string
+  default = "cpx21"
+  description = "Define the server type for the master nodes."
+}
+
+variable "worker_node_image" {
+  type = string
+  default = "ubuntu-22.04"
+  description = "Define the image for the worker nodes."
+}
+
+variable "worker_node_server_type" {
+  type = string
+  default = "cpx21"
+  description = "Define the server type for the worker nodes."
+}
+
 variable "preinstall_hcloud_controller" {
   type = bool
   default = true

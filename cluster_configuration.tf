@@ -19,34 +19,6 @@ resource "kubernetes_secret" "hcloud_ccm" {
   }
 }
 
-# data "http" "hcloud_ccm" {
-#   url = "https://github.com/hetznercloud/hcloud-cloud-controller-manager/releases/latest/download/ccm-networks.yaml"
-
-#   request_headers = {
-#     Accept = "application/json"
-#   }
-
-#   lifecycle {
-#     postcondition {
-#       condition     = contains([201, 204, 200], self.status_code)
-#       error_message = "Please check if the hcloud ccm release is available at the provided address."
-#     }
-#   }
-# }
-
-# locals {
-#   hcloud_ccm_manifests_raw = split("---", data.http.hcloud_ccm.response_body)
-#   hcloud_ccm_manifests     = toset(slice(local.hcloud_ccm_manifests_raw, 1, length(local.hcloud_ccm_manifests_raw)))
-# }
-
-# resource "kubernetes_manifest" "hcloud_ccm" {
-#   depends_on = [
-#     kubernetes_secret.hcloud_ccm
-#   ]
-#   for_each = local.hcloud_ccm_manifests
-#   manifest = yamldecode(each.value)
-# }
-
 resource "kubernetes_service_account" "hcloud_ccm" {
   count = var.preinstall_hcloud_controller ? 1 : 0
   metadata {
@@ -74,6 +46,14 @@ resource "kubernetes_cluster_role_binding" "hcloud_ccm" {
 
 resource "kubernetes_deployment" "hcloud_ccm" {
   count = var.preinstall_hcloud_controller ? 1 : 0
+
+  lifecycle {
+    ignore_changes = [ 
+      spec[0].template[0].spec[0],
+      metadata[0].annotations
+    ]
+  }
+
   metadata {
     name      = "hcloud-cloud-controller-manager"
     namespace = "kube-system"

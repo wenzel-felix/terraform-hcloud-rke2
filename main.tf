@@ -30,8 +30,8 @@ resource "hcloud_server" "master" {
   ]
   count       = var.master_node_count
   name        = "rke2-master-${lower(random_string.master_node_suffix[count.index].result)}"
-  server_type = "cpx21"
-  image       = "ubuntu-20.04"
+  server_type = var.master_node_server_type
+  image       = var.master_node_image
   location    = element(var.node_locations, count.index)
   ssh_keys    = [hcloud_ssh_key.main.id]
   user_data = templatefile("${path.module}/scripts/rke-master.sh.tpl", {
@@ -61,7 +61,9 @@ resource "hcloud_server" "master" {
 
   lifecycle {
     ignore_changes = [
-      user_data
+      user_data,
+      image,
+      server_type
     ]
     create_before_destroy = true
   }
@@ -79,8 +81,8 @@ resource "hcloud_server" "worker" {
   ]
   count       = var.worker_node_count
   name        = "rke2-worker-${lower(random_string.worker_node_suffix[count.index].result)}"
-  server_type = "cpx21"
-  image       = "ubuntu-20.04"
+  server_type = var.worker_node_server_type
+  image       = var.worker_node_image
   location    = element(var.node_locations, count.index)
   ssh_keys    = [hcloud_ssh_key.main.id]
   user_data = templatefile("${path.module}/scripts/rke-worker.sh.tpl", {
@@ -109,7 +111,9 @@ resource "hcloud_server" "worker" {
 
   lifecycle {
     ignore_changes = [
-      user_data
+      user_data,
+      image,
+      server_type
     ]
     create_before_destroy = true
   }
