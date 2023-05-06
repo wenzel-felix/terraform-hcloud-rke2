@@ -4,6 +4,7 @@ module "rke2" {
   master_node_count = 3
   worker_node_count = 1
   generate_ssh_key_file = true
+  rke2_version = "v1.27.1+rke2r1"
 }
 
 resource "local_file" "name" {
