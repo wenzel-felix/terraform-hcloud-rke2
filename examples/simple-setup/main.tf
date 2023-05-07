@@ -5,6 +5,7 @@ module "rke2" {
   worker_node_count = 1
   generate_ssh_key_file = true
   rke2_version = "v1.27.1+rke2r1"
+  preinstall_monitoring_stack = true
 }
 
 resource "local_file" "name" {

@@ -19,6 +19,15 @@ tls-san:
   - ${SERVER_ADDRESS}
 cloud-provider-name: external
 node-ip: $NODE_IP
+%{ if EXPOSE_METRICS }
+etcd-expose-metrics: true
+kube-controller-manager-arg:
+  - "bind-address=0.0.0.0"
+kube-scheduler-arg:
+  - "bind-address=0.0.0.0"
+kube-proxy:
+  - "bind-address=0.0.0.0"
+%{ endif }
 EOF
 
 sudo curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${INSTALL_RKE2_VERSION}" sh -

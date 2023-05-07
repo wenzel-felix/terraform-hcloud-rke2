@@ -74,3 +74,15 @@ variable "preinstall_hcloud_controller" {
   default = true
   description = "Defines whether the Hetzner Cloud Controller should be preinstalled into the cluster."
 }
+
+variable "preinstall_monitoring_stack" {
+  type = bool
+  default = false
+  description = "Defines whether the kube prometheus stack helm chart should be preinstalled into the cluster."
+}
+
+variable "expose_kubernetes_metrics" {
+  type = bool
+  default = false
+  description = "Defines whether the kubernetes metrics (scheduler, etcd, ...) should be exposed on the nodes."
+}

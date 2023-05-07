@@ -7,6 +7,7 @@ provider "kubernetes" {
 }
 
 resource "kubernetes_secret" "hcloud_ccm" {
+  depends_on = [ hcloud_load_balancer_service.management_lb_k8s_service ]
   count = var.preinstall_hcloud_controller ? 1 : 0
   metadata {
     name      = "hcloud"
@@ -20,6 +21,7 @@ resource "kubernetes_secret" "hcloud_ccm" {
 }
 
 resource "kubernetes_service_account" "hcloud_ccm" {
+  depends_on = [ hcloud_load_balancer_service.management_lb_k8s_service ]
   count = var.preinstall_hcloud_controller ? 1 : 0
   metadata {
     name      = "cloud-controller-manager"
@@ -28,6 +30,7 @@ resource "kubernetes_service_account" "hcloud_ccm" {
 }
 
 resource "kubernetes_cluster_role_binding" "hcloud_ccm" {
+  depends_on = [ hcloud_load_balancer_service.management_lb_k8s_service ]
   count = var.preinstall_hcloud_controller ? 1 : 0
   metadata {
     name = "system:cloud-controller-manager"
@@ -45,6 +48,7 @@ resource "kubernetes_cluster_role_binding" "hcloud_ccm" {
 }
 
 resource "kubernetes_deployment" "hcloud_ccm" {
+  depends_on = [ hcloud_load_balancer_service.management_lb_k8s_service ]
   count = var.preinstall_hcloud_controller ? 1 : 0
 
   lifecycle {

@@ -29,7 +29,7 @@ resource "hcloud_load_balancer_service" "management_lb_k8s_service" {
   protocol         = "tcp"
   listen_port      = 6443
   destination_port = 6443
-  depends_on       = [hcloud_load_balancer_target.management_lb_targets]
+  depends_on       = [hcloud_load_balancer_target.management_lb_targets, hcloud_server.worker]
 }
 
 resource "hcloud_load_balancer_service" "management_lb_ssh_service" {
