@@ -85,6 +85,9 @@ resource "kubernetes_ingress_v1" "monitoring_ingress" {
   metadata {
     name      = "monitoring-ingress"
     namespace = "monitoring"
+    annotations = {
+      "cert-manager.io/cluster-issuer" = "cloudflare"
+    }
   }
 
   spec {
@@ -121,6 +124,14 @@ resource "kubernetes_ingress_v1" "monitoring_ingress" {
           path = "/"
         }
       }
+    }
+
+    tls {
+      hosts = [
+        "grafana.hetznerdoesnot.work",
+        "prometheus.hetznerdoesnot.work"
+      ]
+      secret_name = "monitoring-tls"
     }
   }
 }
