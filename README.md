@@ -21,6 +21,7 @@ There are existing Kubernetes projects with Terraform on Hetzner Cloud, but they
 There are no special prerequirements in order to take advantage of this module. Only things required are:
 * a Hetzner Cloud account
 * access to Terraform
+* (Optional) If you want any DNS related configurations you need a doamin setup with cloudflare and a corresponding API key
 
 ## 🚀 Usage
 
