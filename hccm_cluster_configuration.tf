@@ -1,11 +1,3 @@
-provider "kubernetes" {
-  host = local.cluster_host
-
-  client_certificate     = local.client_cert
-  client_key             = local.client_key
-  cluster_ca_certificate = local.cluster_ca
-}
-
 resource "kubernetes_secret" "hcloud_ccm" {
   depends_on = [ hcloud_load_balancer_service.management_lb_k8s_service ]
   count = var.preinstall_hcloud_controller ? 1 : 0

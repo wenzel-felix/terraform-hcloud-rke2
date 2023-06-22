@@ -1,0 +1,13 @@
+tempo:
+  extraArgs:
+    "distributor.log-received-traces": true
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"
+  metricsGenerator:
+    enabled: true
+    remoteWriteUrl: http://prom-stack-kube-prometheus-prometheus.monitoring:9090/api/v1/write

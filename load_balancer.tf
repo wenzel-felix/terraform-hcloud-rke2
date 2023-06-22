@@ -1,5 +1,5 @@
 resource "hcloud_load_balancer" "management_lb" {
-  name               = "rancher-management-lb"
+  name               = "rke2-management-lb"
   load_balancer_type = "lb11"
   location           = "hel1"
     labels = {

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ namespace: monitoring
+ name: otel-collector-conf
+ labels:
+   app: opentelemetry
+   component: otel-collector-conf
+data:
+ otel-collector-config: |
+   receivers:
+     zipkin:
+       endpoint: 0.0.0.0:9411
+   exporters:
+     otlp:
+       endpoint: tempo.monitoring:4317
+       insecure: true
+   service:
+     pipelines:
+       traces:
+         receivers: [zipkin]
+         exporters: [otlp]
