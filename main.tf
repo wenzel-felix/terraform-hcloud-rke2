@@ -26,7 +26,7 @@ resource "hcloud_server" "master" {
   location    = element(var.node_locations, count.index)
   ssh_keys    = [hcloud_ssh_key.main.id]
   user_data = templatefile("${path.module}/scripts/rke-master.sh.tpl", {
-    EXPOSE_METRICS       = var.preinstall_monitoring_stack || var.expose_kubernetes_metrics
+    EXPOSE_METRICS       = var.cluster_configuration.preinstall_monitoring_stack || var.expose_kubernetes_metrics
     RKE_TOKEN            = random_password.rke2_token.result
     INITIAL_MASTER       = count.index == 0 && !local.cluster_loadbalancer_running
     SERVER_ADDRESS       = hcloud_load_balancer.management_lb.ipv4

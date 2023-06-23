@@ -1,0 +1,16 @@
+minio:
+  enabled: true
+loki:
+  isDefault: false
+  datasource:
+    uid: loki
+    jsonData: "{
+      derivedFields: [
+        {
+          matcherRegex: 'traceID=([a-fA-F0-9-]+)',
+          name: 'TraceID',
+          url: '$${__value.raw}',
+          datasourceUid: 'tempo'
+        }
+      ]
+    }"
