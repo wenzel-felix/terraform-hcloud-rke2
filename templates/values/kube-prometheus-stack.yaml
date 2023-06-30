@@ -1,0 +1,19 @@
+prometheus:
+  prometheusSpec:
+    enableRemoteWriteReceiver: true
+    enableFeatures:
+      - remote-write-receiver
+grafana:
+  additionalDataSources:
+    - name: Tempo
+      type: tempo
+      access: browser
+      orgId: 1
+      uid: tempo
+      url: http://tempo:3100
+      isDefault: false
+      editable: true
+      jsonData:
+        httpMethod: GET
+        serviceMap:
+          datasourceUid: 'prometheus'
