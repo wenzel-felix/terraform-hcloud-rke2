@@ -8,4 +8,8 @@ locals {
   
   istio_charts_url = "https://istio-release.storage.googleapis.com/charts"
   istio_values = var.cluster_configuration.preinstall_tracing_stack ? [file("${path.module}/templates/values/istiod.yaml")] : []
+
+  is_ha_cluster = var.master_node_count >= 3
+  
+  system_upgrade_controller_components = split("---", data.http.system_upgrade_controller.response_body)
 }

@@ -131,3 +131,15 @@ variable "letsencrypt_issuer" {
   default     = ""
   description = "The email to send notifications regarding let's encrypt."
 }
+
+variable "enable_auto_os_updates" {
+  type = bool
+  default = true
+  description = "Whether the OS should be updated automatically."
+}
+
+variable "enable_auto_kubernetes_updates" {
+  type = bool
+  default = true
+  description = "Whether the kubernetes version should be updated automatically."
+}

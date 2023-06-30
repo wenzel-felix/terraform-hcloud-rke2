@@ -32,7 +32,7 @@ grafana:
       access: browser
       orgId: 1
       uid: tempo
-      url: http://${helm_release.tempo[0].name}.${kubernetes_namespace.monitoring[0].metadata[0].name}:3100
+      url: http://tempo:3100
       isDefault: false
       editable: true
       jsonData:
