@@ -77,7 +77,7 @@ variable "cluster_configuration" {
     preinstall_tracing_stack      = bool
   })
   default = {
-    preinstall_hcloud_controller  = false
+    preinstall_hcloud_controller  = true
     preinstall_monitoring_stack   = false
     preinstall_istio_service_mesh = false
     preinstall_tracing_stack      = false
