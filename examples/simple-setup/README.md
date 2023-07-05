@@ -7,10 +7,11 @@ cp kubeconfig.yaml ~/.kube/config
 
 Deploy the example:
 ```bash
-k apply -f load_example.yaml
+kubectl label namespace default istio-injection=enabled --overwrite
+kubectl apply -f load_example.yaml
 ```
 
 Delete the example:
 ```bash
-k delete -f load_example.yaml
+kubectl delete -f load_example.yaml
 ```

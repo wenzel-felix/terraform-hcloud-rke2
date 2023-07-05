@@ -9,7 +9,7 @@ module "rke2" {
     preinstall_monitoring_stack   = true
     preinstall_istio_service_mesh = true
     preinstall_tracing_stack      = true
-    preinstall_hcloud_controller  = false
+    preinstall_hcloud_controller  = true
   }
   create_cloudflare_dns_record         = true
   cloudflare_zone_id                   = var.cloudflare_zone_id

@@ -77,7 +77,7 @@ variable "cluster_configuration" {
     preinstall_tracing_stack      = bool
   })
   default = {
-    preinstall_hcloud_controller  = false
+    preinstall_hcloud_controller  = true
     preinstall_monitoring_stack   = false
     preinstall_istio_service_mesh = false
     preinstall_tracing_stack      = false
@@ -130,4 +130,16 @@ variable "letsencrypt_issuer" {
   type        = string
   default     = ""
   description = "The email to send notifications regarding let's encrypt."
+}
+
+variable "enable_auto_os_updates" {
+  type = bool
+  default = true
+  description = "Whether the OS should be updated automatically."
+}
+
+variable "enable_auto_kubernetes_updates" {
+  type = bool
+  default = true
+  description = "Whether the kubernetes version should be updated automatically."
 }

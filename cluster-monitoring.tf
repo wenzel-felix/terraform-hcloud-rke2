@@ -18,35 +18,7 @@ resource "helm_release" "prom_stack" {
 
   namespace = "monitoring"
 
-  values = [
-    <<EOF
-prometheus:
-  prometheusSpec:
-    enableRemoteWriteReceiver: true
-    enableFeatures:
-      - remote-write-receiver
-grafana:
-  additionalDataSources:
-    - name: Tempo
-      type: tempo
-      access: browser
-      orgId: 1
-      uid: tempo
-      url: http://${helm_release.tempo[0].name}.${kubernetes_namespace.monitoring[0].metadata[0].name}:3100
-      isDefault: false
-      editable: true
-      jsonData:
-        httpMethod: GET
-        serviceMap:
-          datasourceUid: 'prometheus'
-    EOF
-  ]
-}
-
-resource "random_password" "loki_auth" {
-  count   = var.cluster_configuration.preinstall_monitoring_stack ? 1 : 0
-  length  = 16
-  special = false
+  values = [ file("${path.module}/templates/values/kube-prometheus-stack.yaml") ]
 }
 
 resource "helm_release" "loki" {
