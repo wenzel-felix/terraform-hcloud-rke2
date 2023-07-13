@@ -90,6 +90,12 @@ variable "cluster_configuration" {
   }
 }
 
+variable "enable_nginx_modsecurity_waf" {
+  type        = bool
+  default     = false
+  description = "Defines whether the nginx modsecurity waf should be enabled."
+}
+
 variable "expose_kubernetes_metrics" {
   type        = bool
   default     = false

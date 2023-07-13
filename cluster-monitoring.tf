@@ -4,6 +4,12 @@ resource "kubernetes_namespace" "monitoring" {
   metadata {
     name = "monitoring"
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+    ]
+  }
 }
 
 resource "helm_release" "prom_stack" {
@@ -91,6 +97,12 @@ resource "kubernetes_ingress_v1" "monitoring_ingress" {
       secret_name = "monitoring-tls"
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+    ]
+  }
 }
 
 resource "kubernetes_config_map_v1" "dashboard" {
@@ -107,5 +119,11 @@ resource "kubernetes_config_map_v1" "dashboard" {
 
   data = {
     "dashboard.json" = file("${path.module}/templates/misc/grafana-dashboard.json")
+  }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+    ]
   }
 }

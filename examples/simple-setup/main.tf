@@ -17,6 +17,7 @@ module "rke2" {
   cloudflare_domain                    = var.cloudflare_domain
   letsencrypt_issuer                   = var.letsencrypt_issuer
   use_cluster_managed_tls_certificates = true
+  enable_nginx_modsecurity_waf         = true
 }
 
 resource "local_file" "name" {
