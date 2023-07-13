@@ -4,6 +4,12 @@ resource "kubernetes_namespace" "kured" {
   metadata {
     name = "kured"
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+    ]
+  }
 }
 
 resource "helm_release" "kured" {

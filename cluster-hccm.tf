@@ -10,6 +10,12 @@ resource "kubernetes_secret" "hcloud_ccm" {
     token   = var.hetzner_token
     network = "${hcloud_network.main.name}"
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+    ]
+  }
 }
 
 resource "helm_release" "hccm" {

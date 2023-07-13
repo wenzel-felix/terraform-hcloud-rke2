@@ -4,6 +4,12 @@ resource "kubernetes_namespace" "cert_manager" {
   metadata {
     name = "cert-manager"
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+    ]
+  }
 }
 
 resource "kubernetes_secret" "cert_manager" {
@@ -16,6 +22,12 @@ resource "kubernetes_secret" "cert_manager" {
 
   data = {
     api-token   = var.cloudflare_token
+  }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+    ]
   }
 }
 

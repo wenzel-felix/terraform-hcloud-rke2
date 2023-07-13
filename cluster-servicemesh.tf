@@ -4,6 +4,12 @@ resource "kubernetes_namespace" "istio_system" {
   metadata {
     name = "istio-system"
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+    ]
+  }
 }
 
 resource "helm_release" "istio_base" {
