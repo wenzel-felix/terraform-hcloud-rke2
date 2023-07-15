@@ -18,6 +18,8 @@ module "rke2" {
   letsencrypt_issuer                   = var.letsencrypt_issuer
   use_cluster_managed_tls_certificates = true
   enable_nginx_modsecurity_waf         = true
+  enable_auto_kubernetes_updates       = true
+  preinstall_gateway_api_crds          = true
 }
 
 resource "local_file" "name" {

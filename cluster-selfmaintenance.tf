@@ -23,6 +23,7 @@ resource "helm_release" "kured" {
 }
 
 data "http" "system_upgrade_controller" {
+  count = var.enable_auto_kubernetes_updates && local.is_ha_cluster ? 1 : 0
   url    = "https://raw.githubusercontent.com/rancher/system-upgrade-controller/master/manifests/system-upgrade-controller.yaml"
 }
 

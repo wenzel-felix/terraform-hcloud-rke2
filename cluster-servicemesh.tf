@@ -33,10 +33,13 @@ resource "helm_release" "istiod" {
   values     = local.istio_values
 }
 
-# data "http" "gateway_api" {
-#   url = "https://github.com/kubernetes-sigs/gateway-api/releases/download/v0.7.1/standard-install.yaml"
-# }
+data "http" "gateway_api" {
+  count = var.preinstall_gateway_api_crds ? 1 : 0
+  url = "https://github.com/kubernetes-sigs/gateway-api/releases/download/${var.gateway_api_version}/standard-install.yaml"
+}
 
-# resource "kubectl_manifest" "gateway_api" {
-#   yaml_body = data.http.gateway_api.request_body
-# }
+resource "kubectl_manifest" "gateway_api" {
+  depends_on = [ hcloud_load_balancer_service.management_lb_k8s_service ]
+  for_each = var.preinstall_gateway_api_crds ? {for i in local.gateway_api_crds: index(local.gateway_api_crds, i) => i} : {}
+  yaml_body = each.value
+}

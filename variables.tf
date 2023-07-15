@@ -149,3 +149,15 @@ variable "enable_auto_kubernetes_updates" {
   default = true
   description = "Whether the kubernetes version should be updated automatically."
 }
+
+variable "preinstall_gateway_api_crds" {
+  type = bool
+  default = false
+  description = "Whether the gateway api crds should be preinstalled."
+}
+
+variable "gateway_api_version" {
+  type = string
+  default = "v0.7.1"
+  description = "The version of the gateway api to install."
+}
