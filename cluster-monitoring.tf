@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "monitoring" {
-  depends_on = [ hcloud_load_balancer_service.management_lb_k8s_service ]
-  count = var.cluster_configuration.preinstall_monitoring_stack ? 1 : 0
+  depends_on = [hcloud_load_balancer_service.management_lb_k8s_service]
+  count      = var.cluster_configuration.preinstall_monitoring_stack ? 1 : 0
   metadata {
     name = "monitoring"
   }
@@ -24,7 +24,7 @@ resource "helm_release" "prom_stack" {
 
   namespace = "monitoring"
 
-  values = [ file("${path.module}/templates/values/kube-prometheus-stack.yaml") ]
+  values = [file("${path.module}/templates/values/kube-prometheus-stack.yaml")]
 }
 
 resource "helm_release" "loki" {
@@ -38,7 +38,7 @@ resource "helm_release" "loki" {
   version    = "2.9.10"
 
   namespace = "monitoring"
-  values = [ file("${path.module}/templates/values/loki-stack.yaml") ]
+  values    = [file("${path.module}/templates/values/loki-stack.yaml")]
 }
 
 resource "kubernetes_ingress_v1" "monitoring_ingress" {
@@ -113,7 +113,7 @@ resource "kubernetes_config_map_v1" "dashboard" {
     name      = "dashboard"
     namespace = "monitoring"
     labels = {
-      grafana_dashboard: "1"
+      grafana_dashboard : "1"
     }
   }
 

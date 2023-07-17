@@ -52,6 +52,10 @@ kind: Gateway
 metadata:
   name: gateway
   namespace: istio-ingress
+  annotations:
+    load-balancer.hetzner.cloud/location: hel1
+    load-balancer.hetzner.cloud/disable-private-ingress: "true"
+    load-balancer.hetzner.cloud/ipv6-disabled: "true"
 spec:
   gatewayClassName: istio
   listeners:

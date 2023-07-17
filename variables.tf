@@ -139,25 +139,25 @@ variable "letsencrypt_issuer" {
 }
 
 variable "enable_auto_os_updates" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Whether the OS should be updated automatically."
 }
 
 variable "enable_auto_kubernetes_updates" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Whether the kubernetes version should be updated automatically."
 }
 
 variable "preinstall_gateway_api_crds" {
-  type = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Whether the gateway api crds should be preinstalled."
 }
 
 variable "gateway_api_version" {
-  type = string
-  default = "v0.7.1"
+  type        = string
+  default     = "v0.7.1"
   description = "The version of the gateway api to install."
 }

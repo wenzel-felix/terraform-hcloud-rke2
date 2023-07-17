@@ -9,3 +9,4 @@ meshConfig:
       max_path_tag_length: 99999
       zipkin:
         address: otel-collector.monitoring:9411
+profile: minimal
