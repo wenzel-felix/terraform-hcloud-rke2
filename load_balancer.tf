@@ -2,9 +2,9 @@ resource "hcloud_load_balancer" "management_lb" {
   name               = "rke2-management-lb"
   load_balancer_type = "lb11"
   location           = "hel1"
-    labels = {
-        "rke2" = "management"
-    }
+  labels = {
+    "rke2" = "management"
+  }
 }
 
 resource "hcloud_load_balancer_network" "management_lb_network_registration" {

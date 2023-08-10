@@ -13,7 +13,7 @@ terraform {
       version = "~> 4.3"
     }
     kubectl = {
-      source = "gavinbunney/kubectl"
+      source  = "gavinbunney/kubectl"
       version = "~> 1.14.0"
     }
   }
@@ -43,7 +43,7 @@ provider "kubectl" {
   client_certificate     = local.client_cert
   client_key             = local.client_key
   cluster_ca_certificate = local.cluster_ca
-  load_config_file = false
+  load_config_file       = false
 }
 
 provider "kubernetes" {
