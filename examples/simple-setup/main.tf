@@ -20,6 +20,8 @@ module "rke2" {
   enable_nginx_modsecurity_waf         = true
   enable_auto_kubernetes_updates       = true
   preinstall_gateway_api_crds          = true
+  domain                               = "hetznerdoesnot.work"
+  expose_oidc_issuer_url               = true
 }
 
 resource "local_file" "name" {

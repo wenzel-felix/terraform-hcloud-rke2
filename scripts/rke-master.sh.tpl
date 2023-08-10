@@ -28,6 +28,13 @@ kube-scheduler-arg:
 kube-proxy:
   - "bind-address=0.0.0.0"
 %{ endif }
+%{ if OIDC_URL != null }
+kube-apiserver-arg:
+  - anonymous-auth=true
+  - api-audiences=${OIDC_URL},https://kubernetes.default.svc.cluster.local,rke2
+  - service-account-issuer=${OIDC_URL}
+  - service-account-jwks-uri=${OIDC_URL}/openid/v1/jwks
+%{ endif }
 EOF
 
 sudo curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${INSTALL_RKE2_VERSION}" sh -

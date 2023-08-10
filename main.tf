@@ -31,6 +31,7 @@ resource "hcloud_server" "master" {
     INITIAL_MASTER       = count.index == 0 && !local.cluster_loadbalancer_running
     SERVER_ADDRESS       = hcloud_load_balancer.management_lb.ipv4
     INSTALL_RKE2_VERSION = var.rke2_version
+    OIDC_URL             = "https://${local.oidc_issuer_subdomain}"
   })
 
   network {

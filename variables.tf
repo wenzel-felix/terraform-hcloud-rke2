@@ -3,6 +3,11 @@ variable "hetzner_token" {
   description = "Hetzner Cloud API Token"
 }
 
+variable "domain" {
+  type        = string
+  description = "Domain for the cluster"
+}
+
 variable "master_node_count" {
   type        = number
   default     = 1
@@ -160,4 +165,10 @@ variable "gateway_api_version" {
   type        = string
   default     = "v0.7.1"
   description = "The version of the gateway api to install."
+}
+
+variable "expose_oidc_issuer_url" {
+  type        = bool
+  default     = false
+  description = "The exposed oidc issuer url. (If set enables oidc)"
 }
