@@ -6,7 +6,8 @@ resource "kubernetes_ingress_v1" "oidc" {
     name      = "oidc-ingress"
     namespace = "default"
     annotations = {
-      "cert-manager.io/cluster-issuer" = "cloudflare"
+      "cert-manager.io/cluster-issuer"               = "cloudflare"
+      "nginx.ingress.kubernetes.io/backend-protocol" = "HTTPS"
     }
   }
 
