@@ -56,7 +56,7 @@ resource "kubernetes_ingress_v1" "monitoring_ingress" {
   spec {
     ingress_class_name = "nginx"
     rule {
-      host = "grafana.hetznerdoesnot.work"
+      host = "grafana.${var.domain}"
       http {
         path {
           backend {
@@ -73,7 +73,7 @@ resource "kubernetes_ingress_v1" "monitoring_ingress" {
     }
 
     rule {
-      host = "prometheus.hetznerdoesnot.work"
+      host = "prometheus.${var.domain}"
       http {
         path {
           backend {
@@ -91,8 +91,8 @@ resource "kubernetes_ingress_v1" "monitoring_ingress" {
 
     tls {
       hosts = [
-        "grafana.hetznerdoesnot.work",
-        "prometheus.hetznerdoesnot.work"
+        "grafana.${var.domain}",
+        "prometheus.${var.domain}"
       ]
       secret_name = "monitoring-tls"
     }

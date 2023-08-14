@@ -15,4 +15,6 @@ locals {
 
   gateway_api_crds_raw = try(split("---\n", data.http.gateway_api[0].response_body), null)
   gateway_api_crds     = try(slice(local.gateway_api_crds_raw, 1, length(local.gateway_api_crds_raw)), null)
+
+  oidc_issuer_subdomain = "oidc.${var.domain}"
 }
