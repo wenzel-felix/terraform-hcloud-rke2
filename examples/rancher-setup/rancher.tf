@@ -22,7 +22,7 @@ resource "rancher2_node_driver" "hetzner_node_driver" {
   builtin           = false
   name              = "hetzner"
   ui_url            = "https://storage.googleapis.com/hcloud-rancher-v2-ui-driver/component.js"
-  url               = "https://github.com/JonasProgrammer/docker-machine-driver-hetzner/releases/download/3.6.0/docker-machine-driver-hetzner_3.6.0_linux_amd64.tar.gz"
+  url               = "https://github.com/JonasProgrammer/docker-machine-driver-hetzner/releases/download/5.0.2/docker-machine-driver-hetzner_5.0.2_linux_amd64.tar.gz"
   whitelist_domains = ["storage.googleapis.com"]
 }
 

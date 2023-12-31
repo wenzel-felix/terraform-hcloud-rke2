@@ -1,9 +1,13 @@
 module "rke2" {
-  source                      = "../.."
-  hetzner_token               = var.hetzner_token
-  master_node_count           = 3
-  worker_node_count           = 1
-  additional_lb_service_ports = ["80", "443"]
+  domain                               = var.domain
+  source                               = "../.."
+  hetzner_token                        = var.hetzner_token
+  master_node_count                    = 3
+  worker_node_count                    = 1
+  additional_lb_service_ports          = ["80", "443"]
+  use_cluster_managed_tls_certificates = false
+  rke2_version                         = var.rke2_version
+  rancher_version                      = var.rancher_version
 }
 
 output "kube_config" {

@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "*.tftpl": "yaml",
+    "plyconfig.json": "jsonc"
+  }
+}

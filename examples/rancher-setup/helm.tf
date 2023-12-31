@@ -17,7 +17,7 @@ resource "helm_release" "cert_manager" {
   namespace  = "cert-manager"
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
-  version    = "1.11.0"
+  version    = "1.13.3"
 
   wait             = true
   create_namespace = true
@@ -39,7 +39,7 @@ resource "helm_release" "rancher" {
   name       = "rancher"
   namespace  = "cattle-system"
   chart      = "rancher"
-  version    = "2.7.1"
+  version    = var.rancher_version
   repository = "https://releases.rancher.com/server-charts/stable"
   depends_on = [helm_release.cert_manager]
 

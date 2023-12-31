@@ -28,3 +28,20 @@ variable "rancher_domain_prefix" {
   default     = "rancher"
   description = "value for the rancher domain prefix"
 }
+
+variable "domain" {
+  type        = string
+  description = "value for the rancher domain"
+}
+
+variable "rke2_version" {
+  type        = string
+  default     = "v1.26.11+rke2r1"
+  description = "rke2 version"
+}
+
+variable "rancher_version" {
+  type        = string
+  default     = "2.7.9"
+  description = "rancher_version"
+}

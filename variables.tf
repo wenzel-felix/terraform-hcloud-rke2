@@ -172,3 +172,9 @@ variable "expose_oidc_issuer_url" {
   default     = false
   description = "The exposed oidc issuer url. (If set enables oidc)"
 }
+
+variable "rancher_version" {
+  type = string
+  default = "2.7.9"
+  description = "rancher_version"
+}
