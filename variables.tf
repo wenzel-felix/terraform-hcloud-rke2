@@ -76,21 +76,34 @@ variable "worker_node_server_type" {
 
 variable "cluster_configuration" {
   type = object({
-    preinstall_hcloud_controller  = bool
-    preinstall_monitoring_stack   = bool
-    preinstall_istio_service_mesh = bool
-    preinstall_tracing_stack      = bool
+    hcloud_controller = optional(object({
+      version    = optional(string, "1.19.0")
+      preinstall = optional(bool, true)
+    }), {})
+    monitoring_stack = optional(object({
+      kube_prom_stack_version = optional(string, "45.25.0")
+      loki_stack_version      = optional(string, "2.9.10")
+      preinstall              = optional(bool, false)
+    }), {})
+    istio_service_mesh = optional(object({
+      version    = optional(string, "1.18.0")
+      preinstall = optional(bool, false)
+    }), {})
+    tracing_stack = optional(object({
+      tempo_version = optional(string, "1.3.1")
+      preinstall    = optional(bool, false)
+    }), {})
+    cert_manager = optional(object({
+      version                         = optional(string, "1.13.3")
+      preinstall                      = optional(bool, true)
+      use_for_preinstalled_components = optional(bool, true)
+    }), {})
   })
-  default = {
-    preinstall_hcloud_controller  = true
-    preinstall_monitoring_stack   = false
-    preinstall_istio_service_mesh = false
-    preinstall_tracing_stack      = false
-  }
+  default = {}
   description = "Define the cluster configuration. (See README.md for more information.)"
 
   validation {
-    condition     = (var.cluster_configuration.preinstall_monitoring_stack == true && var.cluster_configuration.preinstall_istio_service_mesh == true) || var.cluster_configuration.preinstall_tracing_stack == false
+    condition     = (var.cluster_configuration.monitoring_stack.preinstall == true && var.cluster_configuration.istio_service_mesh.preinstall == true) || var.cluster_configuration.tracing_stack.preinstall == false
     error_message = "The tracing stack can only be installed if the monitoring stack and the istio service mesh are installed."
   }
 }
@@ -129,12 +142,6 @@ variable "cloudflare_domain" {
   type        = string
   default     = ""
   description = "The Cloudflare domain. (Required if create_cloudflare_dns_record is true.)"
-}
-
-variable "use_cluster_managed_tls_certificates" {
-  type        = bool
-  default     = true
-  description = "Whether cert manager should be installed on the cluster. If not the CF DNS records will be proxied instead."
 }
 
 variable "letsencrypt_issuer" {

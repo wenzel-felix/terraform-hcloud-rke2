@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "monitoring" {
   depends_on = [hcloud_load_balancer_service.management_lb_k8s_service]
-  count      = var.cluster_configuration.preinstall_monitoring_stack ? 1 : 0
+  count      = var.cluster_configuration.monitoring_stack.preinstall ? 1 : 0
   metadata {
     name = "monitoring"
   }
@@ -15,12 +15,12 @@ resource "kubernetes_namespace" "monitoring" {
 resource "helm_release" "prom_stack" {
   depends_on = [kubernetes_namespace.monitoring, helm_release.loki, kubernetes_config_map_v1.dashboard, helm_release.tempo]
 
-  count = var.cluster_configuration.preinstall_monitoring_stack ? 1 : 0
+  count = var.cluster_configuration.monitoring_stack.preinstall ? 1 : 0
   name  = "prom-stack"
   # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
-  version    = "45.25.0"
+  version    = var.cluster_configuration.monitoring_stack.kube_prom_stack_version
 
   namespace = "monitoring"
 
@@ -30,12 +30,12 @@ resource "helm_release" "prom_stack" {
 resource "helm_release" "loki" {
   depends_on = [kubernetes_namespace.monitoring]
 
-  count = var.cluster_configuration.preinstall_monitoring_stack ? 1 : 0
+  count = var.cluster_configuration.monitoring_stack.preinstall ? 1 : 0
   name  = "loki"
   # https://github.com/grafana/helm-charts/blob/main/charts/loki-stack/values.yaml
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki-stack"
-  version    = "2.9.10"
+  version    = var.cluster_configuration.monitoring_stack.loki_stack_version
 
   namespace = "monitoring"
   values    = [file("${path.module}/templates/values/loki-stack.yaml")]
@@ -44,7 +44,7 @@ resource "helm_release" "loki" {
 resource "kubernetes_ingress_v1" "monitoring_ingress" {
   depends_on = [kubernetes_namespace.monitoring]
 
-  count = var.cluster_configuration.preinstall_monitoring_stack ? 1 : 0
+  count = var.cluster_configuration.monitoring_stack.preinstall ? 1 : 0
   metadata {
     name      = "monitoring-ingress"
     namespace = "monitoring"
@@ -108,7 +108,7 @@ resource "kubernetes_ingress_v1" "monitoring_ingress" {
 resource "kubernetes_config_map_v1" "dashboard" {
   depends_on = [kubernetes_namespace.monitoring]
 
-  count = var.cluster_configuration.preinstall_monitoring_stack ? 1 : 0
+  count = var.cluster_configuration.monitoring_stack.preinstall ? 1 : 0
   metadata {
     name      = "dashboard"
     namespace = "monitoring"

@@ -1,6 +1,6 @@
 resource "kubernetes_namespace" "cert_manager" {
   depends_on = [hcloud_load_balancer_service.management_lb_k8s_service]
-  count      = var.use_cluster_managed_tls_certificates ? 1 : 0
+  count      = var.cluster_configuration.cert_manager.preinstall ? 1 : 0
   metadata {
     name = "cert-manager"
   }
@@ -14,7 +14,7 @@ resource "kubernetes_namespace" "cert_manager" {
 
 resource "kubernetes_secret" "cert_manager" {
   depends_on = [kubernetes_namespace.cert_manager]
-  count      = var.use_cluster_managed_tls_certificates ? 1 : 0
+  count      = var.cluster_configuration.cert_manager.preinstall ? 1 : 0
   metadata {
     name      = "cloudflare-api-token-secret"
     namespace = "cert-manager"
@@ -33,13 +33,13 @@ resource "kubernetes_secret" "cert_manager" {
 
 resource "helm_release" "cert_manager" {
   depends_on = [kubernetes_namespace.cert_manager]
-  count      = var.use_cluster_managed_tls_certificates ? 1 : 0
+  count      = var.cluster_configuration.cert_manager.preinstall ? 1 : 0
 
   name = "cert-manager"
   # https://cert-manager.io/docs/installation/helm/
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
-  version    = "1.11.1"
+  version    = var.cluster_configuration.cert_manager.version
 
   namespace = "cert-manager"
 
@@ -51,7 +51,7 @@ resource "helm_release" "cert_manager" {
 
 resource "kubectl_manifest" "cert_manager_issuer" {
   depends_on = [kubernetes_secret.cert_manager, helm_release.cert_manager]
-  count      = var.use_cluster_managed_tls_certificates ? 1 : 0
+  count      = var.cluster_configuration.cert_manager.use_for_preinstalled_components ? 1 : 0
   yaml_body  = <<YAML
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
