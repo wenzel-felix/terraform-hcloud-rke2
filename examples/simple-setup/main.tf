@@ -14,7 +14,6 @@ module "rke2" {
   create_cloudflare_dns_record         = true
   cloudflare_zone_id                   = var.cloudflare_zone_id
   cloudflare_token                     = var.cloudflare_token
-  cloudflare_domain                    = var.cloudflare_domain
   letsencrypt_issuer                   = var.letsencrypt_issuer
   enable_nginx_modsecurity_waf         = true
   enable_auto_kubernetes_updates       = true
