@@ -7,7 +7,7 @@ locals {
   kube_config                  = replace(data.remote_file.kubeconfig.content, "https://127.0.0.1:6443", local.cluster_host)
 
   istio_charts_url = "https://istio-release.storage.googleapis.com/charts"
-  istio_values     = var.cluster_configuration.preinstall_tracing_stack ? [file("${path.module}/templates/values/istiod.yaml")] : []
+  istio_values     = var.cluster_configuration.tracing_stack.preinstall ? [file("${path.module}/templates/values/istiod.yaml")] : []
 
   is_ha_cluster = var.master_node_count >= 3
 

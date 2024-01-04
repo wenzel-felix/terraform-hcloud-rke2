@@ -7,6 +7,6 @@ resource "cloudflare_record" "wildcard" {
   zone_id  = var.cloudflare_zone_id
   name     = "*.${var.cloudflare_domain}"
   type     = "A"
-  proxied  = !var.use_cluster_managed_tls_certificates
+  proxied  = !var.cluster_configuration.cert_manager.use_for_preinstalled_components
   value    = each.value
 }
