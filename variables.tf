@@ -138,12 +138,6 @@ variable "cloudflare_zone_id" {
   description = "The Cloudflare zone id. (Required if create_cloudflare_dns_record is true.)"
 }
 
-variable "cloudflare_domain" {
-  type        = string
-  default     = ""
-  description = "The Cloudflare domain. (Required if create_cloudflare_dns_record is true.)"
-}
-
 variable "letsencrypt_issuer" {
   type        = string
   default     = ""
