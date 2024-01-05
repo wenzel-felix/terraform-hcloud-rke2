@@ -5,7 +5,7 @@ resource "helm_release" "tempo" {
   chart      = "tempo"
   name       = "tempo"
   namespace  = kubernetes_namespace.monitoring[0].metadata[0].name
-  version    = var.cluster_configuration.tracing_stack.version
+  version    = var.cluster_configuration.tracing_stack.tempo_version
   values     = [file("${path.module}/templates/values/tempo.yaml")]
 }
 
