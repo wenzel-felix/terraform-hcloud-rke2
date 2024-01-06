@@ -2,7 +2,7 @@ terraform {
   required_providers {
     hcloud = {
       source  = "hetznercloud/hcloud"
-      version = "~> 1.40"
+      version = "~> 1.44"
     }
     remote = {
       source  = "tenstad/remote"

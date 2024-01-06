@@ -36,6 +36,7 @@ resource "hcloud_server" "master" {
 
   network {
     network_id = hcloud_network.main.id
+    alias_ips  = []
   }
 
   provisioner "remote-exec" {
@@ -86,6 +87,7 @@ resource "hcloud_server" "worker" {
 
   network {
     network_id = hcloud_network.main.id
+    alias_ips  = []
   }
 
   provisioner "remote-exec" {
