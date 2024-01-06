@@ -18,10 +18,18 @@
 
 # [START gke_release_kubernetes_manifests_microservices_demo]
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-injection: enabled
+  name: load-test
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: emailservice
+  namespace: load-test
 spec:
   selector:
     matchLabels:
@@ -74,6 +82,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: emailservice
 spec:
   type: ClusterIP
@@ -87,6 +96,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: checkoutservice
 spec:
   selector:
@@ -147,6 +157,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: checkoutservice
 spec:
   type: ClusterIP
@@ -160,6 +171,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: recommendationservice
 spec:
   selector:
@@ -215,6 +227,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: recommendationservice
 spec:
   type: ClusterIP
@@ -228,6 +241,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: frontend
 spec:
   selector:
@@ -312,6 +326,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: frontend
 spec:
   type: ClusterIP
@@ -325,6 +340,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: frontend-external
   annotations:
     load-balancer.hetzner.cloud/location: hel1
@@ -340,6 +356,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: paymentservice
 spec:
   selector:
@@ -391,6 +408,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: paymentservice
 spec:
   type: ClusterIP
@@ -404,6 +422,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: productcatalogservice
 spec:
   selector:
@@ -455,6 +474,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: productcatalogservice
 spec:
   type: ClusterIP
@@ -468,6 +488,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: cartservice
 spec:
   selector:
@@ -520,6 +541,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: cartservice
 spec:
   type: ClusterIP
@@ -533,6 +555,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: loadgenerator
 spec:
   selector:
@@ -603,6 +626,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: currencyservice
 spec:
   selector:
@@ -655,6 +679,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: currencyservice
 spec:
   type: ClusterIP
@@ -668,6 +693,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: shippingservice
 spec:
   selector:
@@ -719,6 +745,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: shippingservice
 spec:
   type: ClusterIP
@@ -732,6 +759,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: redis-cart
 spec:
   selector:
@@ -784,6 +812,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: redis-cart
 spec:
   type: ClusterIP
@@ -797,6 +826,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: load-test
   name: adservice
 spec:
   selector:
@@ -850,6 +880,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: load-test
   name: adservice
 spec:
   type: ClusterIP
