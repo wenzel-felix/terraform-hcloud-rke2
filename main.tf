@@ -20,7 +20,7 @@ resource "hcloud_server" "master" {
     hcloud_network_subnet.main
   ]
   count       = var.master_node_count
-  name        = "rke2-master-${lower(random_string.master_node_suffix[count.index].result)}"
+  name        = "${var.cluster_name}-master-${lower(random_string.master_node_suffix[count.index].result)}"
   server_type = var.master_node_server_type
   image       = var.master_node_image
   location    = element(var.node_locations, count.index)
@@ -75,7 +75,7 @@ resource "hcloud_server" "worker" {
     hcloud_network_subnet.main
   ]
   count       = var.worker_node_count
-  name        = "rke2-worker-${lower(random_string.worker_node_suffix[count.index].result)}"
+  name        = "${var.cluster_name}-worker-${lower(random_string.worker_node_suffix[count.index].result)}"
   server_type = var.worker_node_server_type
   image       = var.worker_node_image
   location    = element(var.node_locations, count.index)

@@ -20,6 +20,17 @@ variable "worker_node_count" {
   description = "value for the number of worker nodes"
 }
 
+variable "cluster_name" {
+  type        = string
+  default     = "rke2"
+  description = "value for the cluster name"
+
+  validation {
+    condition     = regex("^[a-z0-9]{1,20}$", var.cluster_name) != null
+    error_message = "The cluster name must be lowercase and alphanumeric and must not be longer than 20 characters."
+  }
+}
+
 variable "rke2_version" {
   type        = string
   default     = ""
