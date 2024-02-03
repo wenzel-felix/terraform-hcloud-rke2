@@ -26,6 +26,17 @@ variable "rke2_version" {
   description = "value for the rke2 version"
 }
 
+variable "rke2_cni" {
+  type        = string
+  default     = "canal"
+  description = "CNI type to use for the cluster"
+
+  validation {
+    condition     = contains(["canal","calico","cilium","none"], var.rke2_cni)
+    error_message = "The value for CNI must be either 'canal', 'cilium', 'calico' or 'none'."
+  }
+}
+
 variable "generate_ssh_key_file" {
   type        = bool
   default     = false
