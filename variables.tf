@@ -32,6 +32,12 @@ variable "generate_ssh_key_file" {
   description = "Defines whether the generated ssh key should be stored as local file."
 }
 
+variable "lb_location" {
+  type        = string
+  default     = "hel1"
+  description = "Define the location for the management cluster loadbalancer."
+}
+
 variable "additional_lb_service_ports" {
   type        = list(string)
   default     = []
