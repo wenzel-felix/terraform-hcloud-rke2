@@ -18,6 +18,7 @@ token: ${RKE_TOKEN}
 tls-san:
   - ${SERVER_ADDRESS}
 cloud-provider-name: external
+cni: ${RKE2_CNI}
 node-ip: $NODE_IP
 %{ if EXPOSE_METRICS }
 etcd-expose-metrics: true
