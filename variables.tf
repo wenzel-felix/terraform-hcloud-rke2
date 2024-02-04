@@ -43,7 +43,7 @@ variable "rke2_cni" {
   description = "CNI type to use for the cluster"
 
   validation {
-    condition     = contains(["canal","calico","cilium","none"], var.rke2_cni)
+    condition     = contains(["canal", "calico", "cilium", "none"], var.rke2_cni)
     error_message = "The value for CNI must be either 'canal', 'cilium', 'calico' or 'none'."
   }
 }
@@ -74,7 +74,7 @@ variable "network_zone" {
 
 variable "network_address" {
   type        = string
-  default     = null
+  default     = "10.0.0.0/16"
   description = "Define the network for the cluster in CIDR format (e.g,. '10.0.0.0/16')."
 }
 
@@ -133,7 +133,7 @@ variable "cluster_configuration" {
       use_for_preinstalled_components = optional(bool, true)
     }), {})
   })
-  default = {}
+  default     = {}
   description = "Define the cluster configuration. (See README.md for more information.)"
 
   validation {
