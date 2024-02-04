@@ -72,6 +72,12 @@ variable "network_zone" {
   description = "Define the network location for the cluster."
 }
 
+variable "network_address" {
+  type        = string
+  default     = null
+  description = "Define the network for the cluster in CIDR format (e.g,. '10.0.0.0/16')."
+}
+
 variable "node_locations" {
   type        = list(string)
   default     = ["hel1", "nbg1", "fsn1"]
