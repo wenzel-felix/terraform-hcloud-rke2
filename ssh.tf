@@ -6,7 +6,7 @@ resource "local_file" "name" {
 }
 
 resource "hcloud_ssh_key" "main" {
-  name       = "main-ssh-key"
+  name       = "${var.cluster_name}-ssh-key"
   public_key = tls_private_key.machines.public_key_openssh
 }
 
