@@ -20,6 +20,17 @@ variable "worker_node_count" {
   description = "value for the number of worker nodes"
 }
 
+variable "cluster_name" {
+  type        = string
+  default     = "rke2"
+  description = "value for the cluster name"
+
+  validation {
+    condition     = regex("^[a-z0-9]{1,20}$", var.cluster_name) != null
+    error_message = "The cluster name must be lowercase and alphanumeric and must not be longer than 20 characters."
+  }
+}
+
 variable "rke2_version" {
   type        = string
   default     = ""
@@ -32,7 +43,7 @@ variable "rke2_cni" {
   description = "CNI type to use for the cluster"
 
   validation {
-    condition     = contains(["canal","calico","cilium","none"], var.rke2_cni)
+    condition     = contains(["canal", "calico", "cilium", "none"], var.rke2_cni)
     error_message = "The value for CNI must be either 'canal', 'cilium', 'calico' or 'none'."
   }
 }
@@ -59,6 +70,12 @@ variable "network_zone" {
   type        = string
   default     = "eu-central"
   description = "Define the network location for the cluster."
+}
+
+variable "network_address" {
+  type        = string
+  default     = "10.0.0.0/16"
+  description = "Define the network for the cluster in CIDR format (e.g,. '10.0.0.0/16')."
 }
 
 variable "node_locations" {
@@ -116,7 +133,7 @@ variable "cluster_configuration" {
       use_for_preinstalled_components = optional(bool, true)
     }), {})
   })
-  default = {}
+  default     = {}
   description = "Define the cluster configuration. (See README.md for more information.)"
 
   validation {

@@ -1,5 +1,5 @@
 resource "hcloud_load_balancer" "management_lb" {
-  name               = "rke2-management-lb"
+  name               = "${var.cluster_name}-management-lb"
   load_balancer_type = "lb11"
   location           = var.lb_location
   labels = {
