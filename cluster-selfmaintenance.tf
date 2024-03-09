@@ -38,9 +38,15 @@ data "http" "system_upgrade_controller" {
   url   = "https://github.com/rancher/system-upgrade-controller/releases/download/v${var.cluster_configuration.self_maintenance.system_upgrade_controller_version}/system-upgrade-controller.yaml"
 }
 
-resource "kubectl_manifest" "system_upgrade_controller" {
+resource "kubectl_manifest" "system_upgrade_controller_ns" {
   depends_on = [hcloud_load_balancer_service.management_lb_k8s_service, kubectl_manifest.system_upgrade_controller_crds]
-  for_each   = var.enable_auto_kubernetes_updates && local.is_ha_cluster ? { for i in local.system_upgrade_controller_components : index(local.system_upgrade_controller_components, i) => i } : {}
+  for_each   = var.enable_auto_kubernetes_updates && local.is_ha_cluster ? { for i in local.system_upgrade_controller_components : index(local.system_upgrade_controller_components, i) => i if strcontains(i, "kind: Namespace")} : {}
+  yaml_body  = each.value
+}
+
+resource "kubectl_manifest" "system_upgrade_controller" {
+  depends_on = [hcloud_load_balancer_service.management_lb_k8s_service, kubectl_manifest.system_upgrade_controller_crds, kubectl_manifest.system_upgrade_controller_ns]
+  for_each   = var.enable_auto_kubernetes_updates && local.is_ha_cluster ? { for i in local.system_upgrade_controller_components : index(local.system_upgrade_controller_components, i) => i if !strcontains(i, "kind: Namespace")} : {}
   yaml_body  = each.value
 }
 
