@@ -22,13 +22,24 @@ resource "helm_release" "kured" {
   version    = "3.0.1"
 }
 
+data "http" "system_upgrade_controller_crds" {
+  count = var.enable_auto_kubernetes_updates && local.is_ha_cluster ? 1 : 0
+  url   = "https://github.com/rancher/system-upgrade-controller/releases/download/v${var.cluster_configuration.self_maintenance.system_upgrade_controller_version}/crd.yaml"
+}
+
+resource "kubectl_manifest" "system_upgrade_controller_crds" {
+  depends_on = [hcloud_load_balancer_service.management_lb_k8s_service]
+  for_each   = var.enable_auto_kubernetes_updates && local.is_ha_cluster ? { for i in local.system_upgrade_controller_crds : index(local.system_upgrade_controller_crds, i) => i } : {}
+  yaml_body  = each.value
+}
+
 data "http" "system_upgrade_controller" {
   count = var.enable_auto_kubernetes_updates && local.is_ha_cluster ? 1 : 0
-  url   = "https://raw.githubusercontent.com/rancher/system-upgrade-controller/master/manifests/system-upgrade-controller.yaml"
+  url   = "https://github.com/rancher/system-upgrade-controller/releases/download/v${var.cluster_configuration.self_maintenance.system_upgrade_controller_version}/system-upgrade-controller.yaml"
 }
 
 resource "kubectl_manifest" "system_upgrade_controller" {
-  depends_on = [hcloud_load_balancer_service.management_lb_k8s_service]
+  depends_on = [hcloud_load_balancer_service.management_lb_k8s_service, kubectl_manifest.system_upgrade_controller_crds]
   for_each   = var.enable_auto_kubernetes_updates && local.is_ha_cluster ? { for i in local.system_upgrade_controller_components : index(local.system_upgrade_controller_components, i) => i } : {}
   yaml_body  = each.value
 }

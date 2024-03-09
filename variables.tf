@@ -132,6 +132,9 @@ variable "cluster_configuration" {
       preinstall                      = optional(bool, true)
       use_for_preinstalled_components = optional(bool, true)
     }), {})
+    self_maintenance = optional(object({
+      system_upgrade_controller_version = optional(string, "0.13.4")
+    }), {})
   })
   default     = {}
   description = "Define the cluster configuration. (See README.md for more information.)"

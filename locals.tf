@@ -11,6 +11,7 @@ locals {
 
   is_ha_cluster = var.master_node_count >= 3
 
+  system_upgrade_controller_crds = try(split("---", data.http.system_upgrade_controller_crds[0].response_body), null)
   system_upgrade_controller_components = try(split("---", data.http.system_upgrade_controller[0].response_body), null)
 
   gateway_api_crds_raw = try(split("---\n", data.http.gateway_api[0].response_body), null)
