@@ -1,0 +1,14 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: auto-settings
+  namespace: monitoring
+spec:
+  exporter:
+    endpoint: http://tempo.monitoring:4317
+  propagators:
+    - tracecontext
+    - baggage
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"

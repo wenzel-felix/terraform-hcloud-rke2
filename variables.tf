@@ -124,8 +124,9 @@ variable "cluster_configuration" {
       preinstall = optional(bool, false)
     }), {})
     tracing_stack = optional(object({
-      tempo_version = optional(string, "1.3.1")
-      preinstall    = optional(bool, false)
+      tempo_version         = optional(string, "1.3.1")
+      otel_operator_version = optional(string, "0.56.0")
+      preinstall            = optional(bool, false)
     }), {})
     cert_manager = optional(object({
       version                         = optional(string, "1.13.3")

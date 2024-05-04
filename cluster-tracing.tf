@@ -9,20 +9,32 @@ resource "helm_release" "tempo" {
   values     = [file("${path.module}/templates/values/tempo.yaml")]
 }
 
-resource "kubectl_manifest" "otel" {
-  count      = var.cluster_configuration.tracing_stack.preinstall ? 1 : 0
-  depends_on = [kubernetes_namespace.monitoring]
-  yaml_body  = file("${path.module}/templates/manifests/otel-deployment.yaml")
+resource "kubernetes_namespace" "otel_operator" {
+  count = var.cluster_configuration.tracing_stack.preinstall ? 1 : 0
+  metadata {
+    name = "opentelemetry-operator-system"
+  }
 }
 
-resource "kubectl_manifest" "otel_svc" {
+resource "helm_release" "otel_operator" {
+  depends_on = [kubernetes_namespace.monitoring, helm_release.cert_manager]
   count      = var.cluster_configuration.tracing_stack.preinstall ? 1 : 0
-  depends_on = [kubernetes_namespace.monitoring]
-  yaml_body  = file("${path.module}/templates/manifests/otel-service.yaml")
+  repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
+  chart      = "opentelemetry-operator"
+  name       = "opentelemetry-operator"
+  namespace  = kubernetes_namespace.otel_operator[0].metadata[0].name
+  version    = var.cluster_configuration.tracing_stack.otel_operator_version
+  values     = [file("${path.module}/templates/values/otel-operator.yaml")]
 }
 
-resource "kubectl_manifest" "config" {
+resource "kubectl_manifest" "otel_collector" {
   count      = var.cluster_configuration.tracing_stack.preinstall ? 1 : 0
-  depends_on = [kubernetes_namespace.monitoring]
-  yaml_body  = file("${path.module}/templates/manifests/otel-configmap.yaml")
+  depends_on = [helm_release.otel_operator]
+  yaml_body  = file("${path.module}/templates/manifests/otel-collector.yaml")
+}
+
+resource "kubectl_manifest" "otel_instrumentation" {
+  count      = var.cluster_configuration.tracing_stack.preinstall ? 1 : 0
+  depends_on = [helm_release.otel_operator]
+  yaml_body  = file("${path.module}/templates/manifests/otel-instrumentation.yaml")
 }

@@ -36,6 +36,9 @@ spec:
       app: emailservice
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "monitoring/auto-settings"
+        instrumentation.opentelemetry.io/container-names: "server"
       labels:
         app: emailservice
     spec:
@@ -104,15 +107,14 @@ spec:
       app: checkoutservice
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-go: "monitoring/auto-settings"
+        instrumentation.opentelemetry.io/container-names: "server"
+        instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/src/checkoutservice"
       labels:
         app: checkoutservice
     spec:
       serviceAccountName: default
-      securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
       containers:
         - name: server
           securityContext:
@@ -179,6 +181,9 @@ spec:
       app: recommendationservice
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "monitoring/auto-settings"
+        instrumentation.opentelemetry.io/container-names: "server"
       labels:
         app: recommendationservice
     spec:
@@ -364,6 +369,9 @@ spec:
       app: paymentservice
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-nodejs: "monitoring/auto-settings"
+        instrumentation.opentelemetry.io/container-names: "server"
       labels:
         app: paymentservice
     spec:
@@ -430,16 +438,15 @@ spec:
       app: productcatalogservice
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-go: "monitoring/auto-settings"
+        instrumentation.opentelemetry.io/container-names: "server"
+        instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/src/server"
       labels:
         app: productcatalogservice
     spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
-      securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
       containers:
       - name: server
         securityContext:
@@ -496,6 +503,9 @@ spec:
       app: cartservice
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-dotnet: "monitoring/auto-settings"
+        instrumentation.opentelemetry.io/container-names: "server"
       labels:
         app: cartservice
     spec:
@@ -634,6 +644,9 @@ spec:
       app: currencyservice
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-nodejs: "monitoring/auto-settings"
+        instrumentation.opentelemetry.io/container-names: "server"
       labels:
         app: currencyservice
     spec:
@@ -701,15 +714,14 @@ spec:
       app: shippingservice
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-go: "monitoring/auto-settings"
+        instrumentation.opentelemetry.io/container-names: "server"
+        instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/src/shippingservice"
       labels:
         app: shippingservice
     spec:
       serviceAccountName: default
-      securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
       containers:
       - name: server
         securityContext:
@@ -834,6 +846,9 @@ spec:
       app: adservice
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "monitoring/auto-settings"
+        instrumentation.opentelemetry.io/container-names: "server"
       labels:
         app: adservice
     spec:
