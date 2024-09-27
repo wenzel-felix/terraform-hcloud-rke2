@@ -20,4 +20,4 @@ spec:
 #    force: true
   upgrade:
     image: rancher/rke2-upgrade
-  channel: stable
+  channel: https://update.rke2.io/v1-release/channels/stable
