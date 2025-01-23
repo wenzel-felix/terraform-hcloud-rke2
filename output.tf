@@ -29,3 +29,11 @@ output "management_network_id" {
 output "management_network_name" {
   value = hcloud_network.main.name
 }
+
+output "cluster_master_nodes_ipv4" {
+  value = hcloud_server.master[*].ipv4_address
+}
+
+output "cluster_worker_nodes_ipv4" {
+  value = hcloud_server.worker[*].ipv4_address
+}
